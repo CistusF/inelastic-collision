@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width
+    let initial = document.querySelector("").value-scale=1.0">
+    <title>물리</title>
+</head>
+
+<body>
+    <table border="1px">
+        <thead>
+            <tr>
+                <td>index</td>
+                <td>V1i</td>
+                <td>V2i</td>
+                <td>Vf</td>
+                <td>Ki</td>
+                <td>Kf</td>
+                <td>Q</td>
+                <td>pf</td>
+                <td>pi</td>
+                <td>Pf/Pi</td>
+            </tr>
+        </thead>
+        <tbody id="insert">
+
+        </tbody>
+        <input type="text" class="m1" placeholder="m1(kg)">
+        <input type="text" class="m2" placeholder="m2(kg)">
+        <input type="text" class="v1i" placeholder="v1i(cm)">
+        <input type="text" class="v2i" placeholder="v2i(cm)">
+        <input type="text" class="vf" placeholder="vf(cm)">
+        <input type="button" value="추가" onclick="addResult();">
+    </table>
+    <script>
+        let tbody = document.querySelector('tbody');
+        var count = 0;
+        const addResult = () => {
+            count++;
+            let m1Enter = document.querySelector(".m1").value;
+            let m2Enter = document.querySelector(".m2").value;
+            let v1iEnter = document.querySelector(".v1i").value;
+            let v2iEnter = document.querySelector(".v2i").value;
+            let vfEnter = document.querySelector(".vf").value;
+
+            const tr = document.createElement('tr');
+            const index = document.createElement('td');
+            const v1i = document.createElement('td');
+            const v2i = document.createElement('td');
+            const vf = document.createElement('td');
+            const ki = document.createElement('td');
+            const kf = document.createElement('td');
+            const q = document.createElement('td');
+            const pf = document.createElement('td');
+            const pi = document.createElement('td');
+            const pfpi = document.createElement('td');
+
+            v1i.textContent = `${v1iEnter} / ${(v1iEnter / 100).toFixed(4)}`;
+            v2i.textContent = `${v2iEnter} / ${(v2iEnter / 100).toFixed(4)}`;
+            vf.textContent = `${vfEnter} / ${(vfEnter / 100).toFixed(4)}`;
+
+            m1Enter = Number((m1Enter / 1000).toFixed(4));
+            m2Enter = Number((m2Enter / 1000).toFixed(4));
+            v1iEnter = Number((v1iEnter / 100).toFixed(3));
+            v2iEnter = Number((v2iEnter / 100).toFixed(3));
+            vfEnter = Number((vfEnter / 100).toFixed(3));
+
+            index.textContent = count
+            let kiResult = 0.5 * m1Enter * (v1iEnter ** 2) + 0.5 * m2Enter * (v2iEnter ** 2);
+            let kfResult = 0.5 * (m1Enter + m2Enter) * (vfEnter ** 2);
+            let qResult = kfResult.toFixed(4) / kiResult.toFixed(4);
+            let piResult = m1Enter * v1iEnter - m2Enter * v2iEnter;
+            let pfResult = (m1Enter + m2Enter) * vfEnter;
+            ki.textContent = kiResult.toFixed(4);
+            kf.textContent = kfResult.toFixed(4);
+            q.textContent = qResult.toFixed(4);
+            pf.textContent = pfResult.toFixed(4);
+            pi.textContent = piResult.toFixed(4);
+            pfpi.textContent = (pfResult.toFixed(5) / piResult.toFixed(5)).toFixed(4);
+
+            tr.appendChild(index);
+            tr.appendChild(v1i);
+            tr.appendChild(v2i);
+            tr.appendChild(vf);
+            tr.appendChild(ki);
+            tr.appendChild(kf);
+            tr.appendChild(q);
+            tr.appendChild(pf);
+            tr.appendChild(pi);
+            tr.appendChild(pfpi);
+            tbody.appendChild(tr);
+            document.querySelector(".v1i").value = "";
+            document.querySelector(".v2i").value = "";
+            document.querySelector(".vf").value = "";
+        };
+    </script>
+</body>
+
+</html>
