@@ -28,73 +28,101 @@
         <tbody id="insert">
 
         </tbody>
-        <input type="text" class="m1" placeholder="m1(kg)">
-        <input type="text" class="m2" placeholder="m2(kg)">
-        <input type="text" class="v1i" placeholder="v1i(cm)">
-        <input type="text" class="v2i" placeholder="v2i(cm)">
-        <input type="text" class="vf" placeholder="vf(cm)">
-        <input type="button" value="추가" onclick="addResult();">
+        <form>
+            <input type="text" id="m1" autocomplete="off" placeholder="m1(kg)">
+            <input type="text" id="m2" autocomplete="off" placeholder="m2(kg)">
+            <input type="text" id="v1i" autocomplete="off" placeholder="v1i(cm)">
+            <input type="text" id="v2i" autocomplete="off" placeholder="v2i(cm)">
+            <input type="text" id="vf" autocomplete="off" placeholder="vf(cm)">
+            <input type="submit" value="추가">
+        </form>
     </table>
     <script>
         let tbody = document.querySelector('tbody');
         var count = 0;
-        const addResult = () => {
+
+        document.querySelector("form").onsubmit = async () => {
             count++;
-            let m1Enter = document.querySelector(".m1").value;
-            let m2Enter = document.querySelector(".m2").value;
-            let v1iEnter = document.querySelector(".v1i").value;
-            let v2iEnter = document.querySelector(".v2i").value;
-            let vfEnter = document.querySelector(".vf").value;
+            var enter = {
+                m1: this.m1.value,
+                m2: this.m2.value,
+                v1i: this.v1i.value,
+                v2i: this.v2i.value,
+                vf: this.vf.value
+            };
+            var edit = {}
 
-            const tr = document.createElement('tr');
-            const index = document.createElement('td');
-            const v1i = document.createElement('td');
-            const v2i = document.createElement('td');
-            const vf = document.createElement('td');
-            const ki = document.createElement('td');
-            const kf = document.createElement('td');
-            const q = document.createElement('td');
-            const pf = document.createElement('td');
-            const pi = document.createElement('td');
-            const pfpi = document.createElement('td');
+            for (i in enter) {
+                if (i.startsWith("m")) {
+                    edit[i] = Number((enter[i] / 1000).toFixed(4));
+                } else {
+                    edit[i] = Number((enter[i] / 100).toFixed(4));
+                };
+            };
 
-            v1i.textContent = `${v1iEnter} / ${(v1iEnter / 100).toFixed(4)}`;
-            v2i.textContent = `${v2iEnter} / ${(v2iEnter / 100).toFixed(4)}`;
-            vf.textContent = `${vfEnter} / ${(vfEnter / 100).toFixed(4)}`;
+            var tr = document.createElement('tr');
+            var rows = {
+                "index": null,
+                "v1i": null,
+                "v2i": null,
+                "vf": null,
+                "ki": null,
+                "kf": null,
+                "q": null,
+                "pf": null,
+                "pi": null,
+                "pfpi": null
+            };
 
-            m1Enter = Number((m1Enter / 1000).toFixed(4));
-            m2Enter = Number((m2Enter / 1000).toFixed(4));
-            v1iEnter = Number((v1iEnter / 100).toFixed(3));
-            v2iEnter = Number((v2iEnter / 100).toFixed(3));
-            vfEnter = Number((vfEnter / 100).toFixed(3));
+            for (i in rows) {
+                rows[i] = document.createElement('td');
+            };
 
-            index.textContent = count
-            let kiResult = 0.5 * m1Enter * (v1iEnter ** 2) + 0.5 * m2Enter * (v2iEnter ** 2);
-            let kfResult = 0.5 * (m1Enter + m2Enter) * (vfEnter ** 2);
-            let qResult = kfResult.toFixed(4) / kiResult.toFixed(4);
-            let piResult = m1Enter * v1iEnter - m2Enter * v2iEnter;
-            let pfResult = (m1Enter + m2Enter) * vfEnter;
-            ki.textContent = kiResult.toFixed(4);
-            kf.textContent = kfResult.toFixed(4);
-            q.textContent = qResult.toFixed(4);
-            pf.textContent = pfResult.toFixed(4);
-            pi.textContent = piResult.toFixed(4);
-            pfpi.textContent = (pfResult.toFixed(5) / piResult.toFixed(5)).toFixed(4);
-
-            tr.appendChild(index);
-            tr.appendChild(v1i);
-            tr.appendChild(v2i);
-            tr.appendChild(vf);
-            tr.appendChild(ki);
-            tr.appendChild(kf);
-            tr.appendChild(q);
-            tr.appendChild(pf);
-            tr.appendChild(pi);
-            tr.appendChild(pfpi);
+            for (i in rows) {
+                let ment = ""
+                switch (i) {
+                    case "index":
+                        ment = count;
+                        break;
+                    case "ki":
+                        edit[i] = Number((0.5 * edit["m1"] * (edit["v1i"] ** 2) + 0.5 * edit["m2"] * (edit["v2i"] ** 2)).toFixed(4));
+                        ment = edit[i];
+                        break;
+                    case "kf":
+                        edit[i] = Number((0.5 * (edit["m1"] + edit["m2"]) * (edit["vf"] ** 2)).toFixed(4));
+                        ment = edit[i];
+                        break
+                    case "q":
+                        edit[i] = edit["kf"] / edit["ki"];
+                        ment = edit[i];
+                        break;
+                    case "pi":
+                        edit[i] = Number((edit["m1"] * edit["v1i"] - edit["m2"] * edit["v2i"]).toFixed(5));
+                        ment = edit[i];
+                        break;
+                    case "pf":
+                        edit[i] = Number(((edit["m1"] + edit["m2"]) * edit["vf"]).toFixed(5));
+                        ment = edit[i];
+                        break;
+                    case "pfpi":
+                        edit[i] = Number((edit["pf"] / edit["pi"]).toFixed(4));
+                        ment = edit[i];
+                        break;
+                    default:
+                        if (!enter[i]) {
+                            ment = edit[i];
+                        } else if (edit[i]) {
+                            ment = `${enter[i]} / ${edit[i]}`;
+                        };
+                        break;
+                }
+                rows[i].textContent = ment;
+                tr.appendChild(rows[i]);
+            };
             tbody.appendChild(tr);
-            document.querySelector(".v1i").value = "";
-            document.querySelector(".v2i").value = "";
-            document.querySelector(".vf").value = "";
+            this.v1i.value = "";
+            this.v2i.value = "";
+            this.vf.value = "";
         };
     </script>
 </body>
